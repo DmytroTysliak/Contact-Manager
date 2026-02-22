@@ -4,7 +4,7 @@ namespace Contact_Manager_Application.Services.Interfaces
 {
     public interface IContactService
     {
-        Task<List<string>> ImportDataAsync(IFormFile file);
+        Task AddRangeAsync(List<Contact> contacts);
         Task<List<Contact>> GetAllAsync();
         Task<bool> UpdateDataAsync(Contact contact);
         Task<bool> DelteDataAsync(int id);

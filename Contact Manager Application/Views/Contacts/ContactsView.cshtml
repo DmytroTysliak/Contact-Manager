@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Contact_Manager_Application.Models.Contact>
+
+@{
+    ViewData["Title"] = "Contacts";
+}
+
+<h1>Contact Manager</h1>
+
+<form id="csvForm" enctype="multipart/form-data">
+    <input type="file" id="csvFile" name="csvFile" accept=".csv" />
+</form>
+
+<hr />
+
+<table id="contactsTable" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date of Birth</th>
+            <th>Married</th>
+            <th>Phone</th>
+            <th>Salary</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contact in Model)
+        {
+            <tr data-id="@contact.Id">
+                <td contenteditable="true" class="name">@contact.Name</td>
+                <td contenteditable="true" class="dob">@contact.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                <td contenteditable="true" class="married">@contact.Married</td>
+                <td contenteditable="true" class="phone">@contact.Phone</td>
+                <td contenteditable="true" class="salary">@contact.Salary</td>
+                <td>
+                    <button class="btn btn-sm btn-success saveBtn">Save</button>
+                    <button class="btn btn-sm btn-danger deleteBtn">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -31,9 +31,12 @@ namespace Contact_Manager_Application.Services
             return true;
         }
 
-        public Task<List<string>> ImportDataAsync(IFormFile file)
+        public async Task AddRangeAsync(List<Contact> contacts)
         {
-            throw new NotImplementedException();
+            if (contacts == null || !contacts.Any()) return;
+
+            await _context.Contacts.AddRangeAsync(contacts);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> UpdateDataAsync(Contact contact)

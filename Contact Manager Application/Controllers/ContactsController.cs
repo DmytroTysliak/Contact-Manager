@@ -13,10 +13,10 @@ namespace Contact_Manager_Application.Controllers
             _service = service;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> ContactsView()
         {
             var contacts = await _service.GetAllAsync();
-            return View();
+            return View(contacts);
         }
 
         [HttpDelete]
@@ -24,7 +24,7 @@ namespace Contact_Manager_Application.Controllers
         {
             var result = await _service.DelteDataAsync(id);
             if (!result) 
-                return NotFound();
+                return NotFound("Contacts not found");
 
             return Ok();
         }
@@ -37,9 +37,44 @@ namespace Contact_Manager_Application.Controllers
 
             var result = await _service.UpdateDataAsync(contact);
             if (!result)
-                return NotFound();
+                return NotFound("Contacts not found");
 
             return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadCsv(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            try
+            {
+                using var stream = new StreamReader(file.OpenReadStream());
+                var contacts = new List<Contact>();
+
+                while (!stream.EndOfStream)
+                {
+                    var line = await stream.ReadLineAsync();
+                    var values = line.Split(',');
+
+                    contacts.Add(new Contact
+                    {
+                        Name = values[0],
+                        DateOfBirth = DateTime.Parse(values[1]),
+                        Married = bool.Parse(values[2]),
+                        Phone = values[3],
+                        Salary = decimal.Parse(values[4])
+                    });
+                }
+
+                await _service.AddRangeAsync(contacts); 
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
