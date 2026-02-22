@@ -39,6 +39,7 @@ namespace Contact_Manager_Application.Controllers
             if (!result)
                 return NotFound("Contacts not found");
 
+
             return Ok();
         }
 
@@ -53,9 +54,19 @@ namespace Contact_Manager_Application.Controllers
                 using var stream = new StreamReader(file.OpenReadStream());
                 var contacts = new List<Contact>();
 
+                bool isFirstLine = true;
+
                 while (!stream.EndOfStream)
                 {
                     var line = await stream.ReadLineAsync();
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    if (isFirstLine)
+                    {
+                        isFirstLine = false;
+                        continue;
+                    }
+
                     var values = line.Split(',');
 
                     contacts.Add(new Contact

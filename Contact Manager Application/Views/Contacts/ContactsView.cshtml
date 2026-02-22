@@ -8,6 +8,7 @@
 
 <form id="csvForm" enctype="multipart/form-data">
     <input type="file" id="csvFile" name="csvFile" accept=".csv" />
+    <button type="submit" class="btn btn-primary">Upload CSV</button>
 </form>
 
 <hr />
@@ -40,3 +41,51 @@
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            $('#contactsTable').DataTable();
+
+            $(".saveBtn").click(async function () {
+
+                const row = $(this).closest("tr");
+                const id = row.data("id");
+
+                const contact = {
+                    Id: id,
+                    Name: row.find(".name").text(),
+                    DateOfBirth: row.find(".dob").text(),
+                    Married: row.find(".married").text().toLowerCase() === "true",
+                    Phone: row.find(".phone").text(),
+                    Salary: parseFloat(row.find(".salary").text())
+                };
+
+                const response = await fetch('/Contacts/Update', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(contact)
+                });
+
+                alert(response.ok ? "Updated!" : "Update failed");
+            });
+
+            $(".deleteBtn").click(async function () {
+
+                const row = $(this).closest("tr");
+                const id = row.data("id");
+
+                const response = await fetch(`/Contacts/Delete?id=${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok)
+                    row.remove();
+                else
+                    alert("Delete failed");
+            });
+
+        });
+    </script>
+}
