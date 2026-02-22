@@ -68,8 +68,13 @@
                     body: JSON.stringify(contact)
                 });
 
-                alert(response.ok ? "Updated!" : "Update failed");
-            });
+                const resultText = await response.text();
+
+                if (response.ok) 
+                    alert("Updated!");
+                else 
+                    alert("Update failed:\n" + resultText);
+                });
 
             $(".deleteBtn").click(async function () {
 

@@ -69,13 +69,22 @@ namespace Contact_Manager_Application.Controllers
 
                     var values = line.Split(',');
 
+                    if (!DateTime.TryParse(values[1], out var dob))
+                        return BadRequest($"Invalid date format in line: {line}");
+
+                    if (!bool.TryParse(values[2], out var married))
+                        return BadRequest($"Invalid married value in line: {line}");
+
+                    if (!decimal.TryParse(values[4], out var salary))
+                        return BadRequest($"Invalid salary format in line: {line}");
+
                     contacts.Add(new Contact
                     {
                         Name = values[0],
-                        DateOfBirth = DateTime.Parse(values[1]),
-                        Married = bool.Parse(values[2]),
+                        DateOfBirth = dob,
+                        Married = married,
                         Phone = values[3],
-                        Salary = decimal.Parse(values[4])
+                        Salary = salary
                     });
                 }
 
