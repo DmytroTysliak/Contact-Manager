@@ -1,37 +1,46 @@
-﻿using Contact_Manager_Application.Models;
+﻿using Contact_Manager_Application.Data;
+using Contact_Manager_Application.Models;
 using Contact_Manager_Application.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Contact_Manager_Application.Services
 {
     public class ContactService : IContactService
     {
-        private static List<Contact> _contacts = new();
+        private readonly AppDbContext _context;
 
-        public Task<List<Contact>> GetAllAsync()
+        public ContactService(AppDbContext context)
         {
-            return Task.FromResult(_contacts);
+            _context = context;
         }
 
-        public Task<bool> DelteDataAsync(int id)
+        public async Task<List<Contact>> GetAllAsync()
         {
-            var contact = _contacts.FirstOrDefault(c => c.Id == id);
-            if(contact == null)
-                return Task.FromResult(false);
+            return await _context.Contacts.ToListAsync();
+        }
 
-            _contacts.Remove(contact);
-            return Task.FromResult(true);
+        public async Task<bool> DelteDataAsync(int id)
+        {
+            var contact = await _context.Contacts.FindAsync(id);
+            if(contact == null)
+                return false;
+
+           _context.Contacts.Remove(contact);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         public Task<List<string>> ImportDataAsync(IFormFile file)
         {
-            return Task.FromResult(new List<string> { "CSV login coming next" });
+            throw new NotImplementedException();
         }
 
-        public Task<bool> UpdateDataAsync(Contact contact)
+        public async Task<bool> UpdateDataAsync(Contact contact)
         {
-            var exist = _contacts.FirstOrDefault(x => x.Id == contact.Id);
+            var exist = await _context.Contacts.FindAsync(contact.Id);
             if(exist == null)
-                return Task.FromResult(false);
+                return false;
 
             exist.Name = contact.Name;
             exist.DateOfBirth = contact.DateOfBirth;
@@ -39,7 +48,9 @@ namespace Contact_Manager_Application.Services
             exist.Phone = contact.Phone;
             exist.Salary = contact.Salary;
 
-            return Task.FromResult(true);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }
