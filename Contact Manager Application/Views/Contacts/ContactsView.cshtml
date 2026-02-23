@@ -91,6 +91,35 @@
                     alert("Delete failed");
             });
 
+                    $("#csvForm").submit(async function (e) {
+
+            e.preventDefault();   
+
+            const fileInput = $("#csvFile")[0];
+
+            if (!fileInput.files.length) {
+                alert("Please select a file");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const response = await fetch('/Contacts/UploadCsv', {
+                method: 'POST',
+                body: formData
+            });
+
+            const resultText = await response.text();
+
+            if (response.ok) {
+                alert("Upload successful!");
+                location.reload();
+            } else {
+                alert("Upload failed:\n" + resultText);
+            }
+        });
+
         });
     </script>
 }

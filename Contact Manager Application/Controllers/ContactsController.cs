@@ -23,7 +23,7 @@ namespace Contact_Manager_Application.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _service.DelteDataAsync(id);
-            if (!result) 
+            if (!result)
                 return NotFound("Contacts not found");
 
             return Ok();
@@ -32,8 +32,14 @@ namespace Contact_Manager_Application.Controllers
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] Contact contact)
         {
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage);
+
+                return BadRequest(string.Join("\n", errors));
+            }
 
             var result = await _service.UpdateDataAsync(contact);
             if (!result)
@@ -88,7 +94,7 @@ namespace Contact_Manager_Application.Controllers
                     });
                 }
 
-                await _service.AddRangeAsync(contacts); 
+                await _service.AddRangeAsync(contacts);
                 return Ok();
             }
             catch (Exception ex)
