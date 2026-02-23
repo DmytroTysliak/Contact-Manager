@@ -30,7 +30,12 @@
             <tr data-id="@contact.Id">
                 <td contenteditable="true" class="name">@contact.Name</td>
                 <td contenteditable="true" class="dob">@contact.DateOfBirth.ToString("yyyy-MM-dd")</td>
-                <td contenteditable="true" class="married">@contact.Married</td>
+                <td>
+                    <select class="form-select married">
+                        <option value="true" selected="@(contact.Married == true)">True</option>
+                        <option value="false" selected="@(contact.Married == false)">False</option>
+                    </select>
+                </td>
                 <td contenteditable="true" class="phone">@contact.Phone</td>
                 <td contenteditable="true" class="salary">@contact.Salary</td>
                 <td>
@@ -48,16 +53,36 @@
 
             $('#contactsTable').DataTable();
 
+
+            $("#contactsTable tbody tr").each(function () {
+                const row = $(this);
+
+                row.find(".name").data("original", row.find(".name").text());
+                row.find(".dob").data("original", row.find(".dob").text());
+                row.find(".married").data("original", row.find(".married").val());
+                row.find(".phone").data("original", row.find(".phone").text());
+                row.find(".salary").data("original", row.find(".salary").text());
+            });
+
             $(".saveBtn").click(async function () {
 
                 const row = $(this).closest("tr");
                 const id = row.data("id");
 
+
+                const oldValues = {
+                    Name: row.find(".name").data("original"),
+                    DateOfBirth: row.find(".dob").data("original"),
+                    Married: row.find(".married").data("original"),
+                    Phone: row.find(".phone").data("original"),
+                    Salary: row.find(".salary").data("original")
+                };
+
                 const contact = {
                     Id: id,
                     Name: row.find(".name").text(),
                     DateOfBirth: row.find(".dob").text(),
-                    Married: row.find(".married").text().toLowerCase() === "true",
+                    Married: row.find(".married").val() === "true",
                     Phone: row.find(".phone").text(),
                     Salary: parseFloat(row.find(".salary").text())
                 };
@@ -70,11 +95,29 @@
 
                 const resultText = await response.text();
 
-                if (response.ok) 
+                if (response.ok) {
+
+
+                    row.find(".name").data("original", contact.Name);
+                    row.find(".dob").data("original", contact.DateOfBirth);
+                    row.find(".married").data("original", row.find(".married").val());
+                    row.find(".phone").data("original", contact.Phone);
+                    row.find(".salary").data("original", contact.Salary);
+
                     alert("Updated!");
-                else 
+
+                } else {
+
                     alert("Update failed:\n" + resultText);
-                });
+
+
+                    row.find(".name").text(oldValues.Name);
+                    row.find(".dob").text(oldValues.DateOfBirth);
+                    row.find(".married").val(oldValues.Married);
+                    row.find(".phone").text(oldValues.Phone);
+                    row.find(".salary").text(oldValues.Salary);
+                }
+        });
 
             $(".deleteBtn").click(async function () {
 
@@ -93,7 +136,7 @@
 
                     $("#csvForm").submit(async function (e) {
 
-            e.preventDefault();   
+            e.preventDefault();
 
             const fileInput = $("#csvFile")[0];
 

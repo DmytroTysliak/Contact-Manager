@@ -78,6 +78,9 @@ namespace Contact_Manager_Application.Controllers
                     if (!DateTime.TryParse(values[1], out var dob))
                         return BadRequest($"Invalid date format in line: {line}");
 
+                    if (string.IsNullOrWhiteSpace(values[2]))
+                        return BadRequest($"Married field is required in line: {line}");
+
                     if (!bool.TryParse(values[2], out var married))
                         return BadRequest($"Invalid married value in line: {line}");
 
