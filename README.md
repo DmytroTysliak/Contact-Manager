@@ -23,13 +23,3 @@ The project is built using:
 - Other .NET libraries according to the `.sln` file  
 
 *(You can list specific frameworks like ASP.NET MVC, Entity Framework, etc., if applicable.)*
-
-## 🚀 Getting Started
-
-Follow these steps to run the project locally:
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/DmytroTysliak/Contact-Manager.git
-cd Contact-Manager
